@@ -46,7 +46,7 @@ Antes de rodar o projeto, instale:
 * Node.js >= 18
 * pnpm
 * PostgreSQL rodando local ou remoto
-* RabbitMQ (se o projeto usar eventos entre serviços)
+* RabbitMQ
 
 ---
 
@@ -141,24 +141,6 @@ O Turborepo executa os serviços conforme configuração no `turbo.json` (geralm
 * Escuta eventos como `tasks.created`, `tasks.updated`, `comment.new`
 * Persiste notificações no banco
 * Envia eventos via WebSocket para os clientes conectados
-
----
-
-## 🧪 Testes
-
-> 🧪 Se houver testes configurados:
-
-```bash
-pnpm test
-```
-
-ou
-
-```bash
-pnpm turbo run test
-```
-
-(Verifique se há configuração de testes dentro de cada app.)
 
 ---
 
