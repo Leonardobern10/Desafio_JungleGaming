@@ -1,0 +1,52 @@
+# ============================
+# BASE
+# ============================
+FROM node:22-alpine AS base
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps/notifications-service/package.json apps/notifications-service/package.json
+
+# Executa prune para notifications-service
+RUN pnpm dlx turbo prune --scope=notifications-service --docker
+
+# ============================
+# BUILDER
+# ============================
+FROM node:22-alpine AS builder
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+# Copia resultados do prune
+COPY --from=base /app/out/full/ ./ 
+COPY --from=base /app/out/json/ ./ 
+COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=base /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+
+# Copia explicitamente tsconfig(s)
+COPY apps/notifications-service/tsconfig*.json apps/notifications-service/
+
+# Instala dependências
+RUN pnpm install --frozen-lockfile
+
+# Build NestJS
+RUN pnpm --filter "notifications-service" build
+
+# ============================
+# RUNNER
+# ============================
+FROM node:22-alpine AS runner
+WORKDIR /app
+
+# Copia dist
+COPY --from=builder /app/apps/notifications-service/dist ./dist
+COPY --from=builder /app/apps/notifications-service/package.json ./package.json
+
+# Copia node_modules apenas do serviço
+COPY --from=builder /app/node_modules ./node_modules
+
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

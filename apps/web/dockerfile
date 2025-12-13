@@ -1,0 +1,23 @@
+FROM node:22-alpine AS web
+
+# Diretório da aplicação
+WORKDIR /app
+
+# Usa corepack em vez de npm install -g pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copia package.json e pnpm-lock.yaml (ou package-lock)
+COPY package.json .
+COPY pnpm-lock.yaml ./
+
+# Instala dependências
+RUN pnpm install
+
+# Copia o restanteW
+COPY . .
+
+# Porta padrão do Vite
+EXPOSE 5173
+
+# Habilita o host 0.0.0.0 para funcionar no Docker
+CMD ["pnpm", "dev", "--host", "0.0.0.0"]
