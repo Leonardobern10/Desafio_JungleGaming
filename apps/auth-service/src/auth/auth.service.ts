@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -14,6 +16,8 @@ import { ResponseAuthRefresh } from 'src/types/ResponseAuthRefresh';
 import { ResponseAuthLogout } from 'src/types/ResponseAuthLogout';
 import { UserEntity } from 'src/users/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { RpcException } from '@nestjs/microservices';
+import { STATUS_CODES } from 'http';
 
 /**
  * Serviço responsável por toda a lógica de autenticação, incluindo login,
@@ -49,13 +53,21 @@ export class AuthService {
         this.logger.warn(
           `Falha de autenticação: usuário não encontrado - ${email}`,
         );
-        throw new UnauthorizedException('Credenciais inválidas');
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Usuário não encontrado! Faça seu cadastro.',
+          errorName: 'Not found',
+        });
       }
 
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) {
         this.logger.warn(`Falha de autenticação: senha inválida - ${email}`);
-        throw new UnauthorizedException('Credenciais inválidas');
+        throw new RpcException({
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Credenciais inválidas! Tente novamente.',
+          errorName: 'Unauthorized Exception',
+        });
       }
 
       const payload = { sub: user.id, email: user.email };
@@ -146,9 +158,7 @@ export class AuthService {
    */
   async logout(userId: string): Promise<ResponseAuthLogout> {
     const user = await this.usersService.findById(userId);
-
     if (!user) throw new BadRequestException('Usuário não encontrado');
-
     await this.usersService.removeRefreshToken(userId);
     return { message: 'Logout realizado com sucesso!' };
   }

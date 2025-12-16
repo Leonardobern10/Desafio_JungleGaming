@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   InternalServerErrorException,
+  NotFoundException,
   Post,
   Req,
   Res,
@@ -77,22 +78,19 @@ export class AuthController implements InterfaceAuthController {
   async login(
     @Body() body: LoginDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<ResponseAuthController> {
-    let result;
-    try {
-      result = await lastValueFrom(this.authService.send('auth.login', body));
-      if (result.refresh_token) setRefreshCookie(res, result.refresh_token);
-      return {
-        access_token: result.access_token,
-        user: result.user,
-      };
-    } catch (error) {
-      console.log(error);
-      if (error.context.response.message === 'User not found') {
-        throw new UnauthorizedException('User dont exists');
-      }
-      throw new BadRequestException('Invalid credentials');
+  ): Promise<ResponseAuthController | void> {
+    const result = await lastValueFrom(
+      this.authService.send('auth.login', body),
+    );
+
+    if (result.refresh_token) {
+      setRefreshCookie(res, result.refresh_token);
     }
+
+    return {
+      access_token: result.access_token,
+      user: result.user,
+    };
   }
 
   /**

@@ -5,6 +5,7 @@ import { RefreshDto } from './dto/refresh.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { RegisterDto } from './dto/register.dto';
 import { InterfaceAuthController } from 'src/interfaces/InterfaceAuthController';
+import { ResponseAuthLogin } from 'src/types/ResponseAuthLogin';
 
 /**
  * Controller de autenticação responsável por expor métodos via microservice.
@@ -20,12 +21,8 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<any>} Retorna tokens de acesso e refresh e dados do usuário.
    */
   @MessagePattern('auth.login')
-  login(@Payload() data: LoginDto): Promise<any> {
-    try {
-      return this.authService.login(data.email, data.password);
-    } catch (error) {
-      return error;
-    }
+  async login(@Payload() data: LoginDto): Promise<ResponseAuthLogin> {
+    return this.authService.login(data.email, data.password);
   }
 
   /**

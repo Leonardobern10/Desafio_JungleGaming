@@ -27,8 +27,6 @@ export const useLogin = () => {
       toast.success("Login efetuado com sucesso!");
       navigate({ from: "/tasks/dashboard" });
       reset();
-    } else if (errors) {
-      toast.error(`Erro ao efetuar login: ${errors.root?.type}`);
     }
   };
 

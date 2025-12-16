@@ -1,5 +1,7 @@
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 export const fetchLogin = async (data: { email: string; password: string }) => {
   try {
@@ -10,7 +12,12 @@ export const fetchLogin = async (data: { email: string; password: string }) => {
       .setSession(response.data.access_token, response.data.user);
     return true;
   } catch (error) {
-    console.error(error);
+    console.log(error);
+
+    toast.warning(
+      (error as AxiosError<{ message: string }>).response?.data?.message ??
+        "Erro ao autenticar"
+    );
     return false;
   }
 };

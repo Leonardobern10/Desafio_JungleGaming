@@ -19,7 +19,7 @@ export interface InterfaceAuthController {
    * @param {Response} res - Objeto Response do Express para setar cookies.
    * @returns {Promise<ResponseAuthController>} Retorna objeto contendo access_token e dados do usuário.
    */
-  login(body: LoginDto, res: Response): Promise<ResponseAuthController>;
+  login(body: LoginDto, res: Response): Promise<ResponseAuthController | void>;
 
   /**
    * Registra um novo usuário no sistema.
