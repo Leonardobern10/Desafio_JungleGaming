@@ -8,12 +8,14 @@ import {
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -21,20 +23,25 @@ import {
   ApiOperation,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import { lastValueFrom } from 'rxjs';
 import { JwtAuthGuard } from 'src/jwt/jwt.guard';
 import type { Response, Request } from 'express';
-import { ResponseAuthController } from 'src/types/ResponseAuthController';
+
 import { LoginDto } from 'src/entities/dto/LoginDto';
 import { RegisterDto } from 'src/entities/dto/RegisterDto';
 import { UserEntity } from 'src/entities/UserEntity';
-import { ResponseRefresh } from 'src/types/ResponseRefresh';
-import { ResponseLogout } from 'src/types/ResponseLogout';
+
 import { InterfaceAuthController } from 'src/interfaces/InterfaceAuthController';
 import { clearRefreshCookie, setRefreshCookie } from 'src/utils/cookies';
 import type { AuthRequest, ExpressUser } from 'src/types/ExpressUser';
+import {
+  ResponseAuthController,
+  ResponseLogout,
+  ResponseRefresh,
+} from 'src/types/ResponsesAuthGateway';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -53,6 +60,9 @@ export class AuthController implements InterfaceAuthController {
    */
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
+  @ApiBody({
+    schema: { example: { email: 'joao@email.com', password: '123456' } },
+  })
   @ApiCreatedResponse({
     description: 'User authenticated successfully',
     schema: {
@@ -62,22 +72,25 @@ export class AuthController implements InterfaceAuthController {
       },
     },
   })
-  @ApiBadRequestResponse({ description: 'Invalid credentials' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
+  @ApiBadRequestResponse({ description: 'Unapropriated infos' })
   async login(
     @Body() body: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseAuthController> {
+    let result;
     try {
-      const result = await lastValueFrom(
-        this.authService.send('auth.login', body),
-      );
+      result = await lastValueFrom(this.authService.send('auth.login', body));
       if (result.refresh_token) setRefreshCookie(res, result.refresh_token);
       return {
         access_token: result.access_token,
         user: result.user,
       };
     } catch (error) {
-      this.logger.error(error, 'Login failed');
+      console.log(error);
+      if (error.context.response.message === 'User not found') {
+        throw new UnauthorizedException('User dont exists');
+      }
       throw new BadRequestException('Invalid credentials');
     }
   }
@@ -89,6 +102,11 @@ export class AuthController implements InterfaceAuthController {
    * @throws {InternalServerErrorException} - Se ocorrer erro inesperado
    */
   @Post('register')
+  @ApiBody({
+    schema: {
+      example: { name: 'joao', email: 'joao@email.com', password: 'joao123' },
+    },
+  })
   @ApiOperation({ summary: 'Register new user' })
   @ApiCreatedResponse({
     description: 'User successfully registered',
@@ -221,7 +239,7 @@ export class AuthController implements InterfaceAuthController {
   async getAllUsers(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<UserEntity[]> {
     const { id } = req.user;
     // notifica auth-service para remover hash do DB
     return lastValueFrom(this.authService.send('auth.allUsers', id));

@@ -20,8 +20,12 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<any>} Retorna tokens de acesso e refresh e dados do usuário.
    */
   @MessagePattern('auth.login')
-  login(@Payload() data: LoginDto) {
-    return this.authService.login(data.email, data.password);
+  login(@Payload() data: LoginDto): Promise<any> {
+    try {
+      return this.authService.login(data.email, data.password);
+    } catch (error) {
+      return error;
+    }
   }
 
   /**
@@ -30,7 +34,7 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<any>} Retorna um novo access token e refresh token.
    */
   @MessagePattern('auth.refresh')
-  async refresh(@Payload() data: RefreshDto) {
+  async refresh(@Payload() data: RefreshDto): Promise<any> {
     return this.authService.refresh(data);
   }
 
@@ -40,7 +44,7 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<any>} Retorna mensagem de logout.
    */
   @MessagePattern('auth.logout')
-  async logout(@Payload() userId: string) {
+  async logout(@Payload() userId: string): Promise<any> {
     return this.authService.logout(userId);
   }
 
@@ -50,7 +54,7 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<any>} Retorna o usuário criado.
    */
   @MessagePattern('auth.register')
-  async register(@Payload() data: RegisterDto) {
+  async register(@Payload() data: RegisterDto): Promise<any> {
     return this.authService.create(data);
   }
 
@@ -60,7 +64,7 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<boolean>} Retorna true se o email estiver disponível.
    */
   @MessagePattern('auth.validateUser')
-  async validateUser(@Payload() email: string) {
+  async validateUser(@Payload() email: string): Promise<boolean> {
     return this.authService.validateEmail(email);
   }
 
@@ -69,7 +73,7 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<any[]>} Lista de usuários.
    */
   @MessagePattern('auth.allUsers')
-  async getAllUsers() {
+  async getAllUsers(): Promise<any[]> {
     return this.authService.getAll();
   }
 }

@@ -36,7 +36,7 @@ export class NotificationsGateway
    * Método chamado quando um cliente se desconecta.
    */
   handleDisconnect() {
-    console.log('Cliente desconectado');
+    console.log('Cliente desconectado!');
   }
 
   /**

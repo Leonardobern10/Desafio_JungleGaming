@@ -4,11 +4,13 @@ import { useAuthStore } from "@/store/useAuthStore";
 export const fetchLogin = async (data: { email: string; password: string }) => {
   try {
     const response = await api.post("/auth/login", data);
+    console.log(response);
     useAuthStore
       .getState()
       .setSession(response.data.access_token, response.data.user);
     return true;
   } catch (error) {
+    console.error(error);
     return false;
   }
 };

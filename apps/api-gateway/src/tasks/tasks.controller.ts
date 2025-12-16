@@ -14,6 +14,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -54,15 +55,27 @@ export class TasksController implements IntefaceTasksController {
    * @returns {Promise<any>} Retorna a tarefa criada.
    */
   @Post()
+  @ApiBody({
+    schema: {
+      example: {
+        title: 'Nova tarefa',
+        description: 'Adicionando nova tarefa',
+        dueDate: new Date(),
+        priority: TaskPriority.HIGH,
+        status: TaskStatus.IN_PROGRESS,
+        assignedEmails: 'joao@email.com',
+      },
+    },
+  })
   @ApiOperation({ summary: 'Create a new task' })
   @ApiCreatedResponse({
     description: 'Task successfully created',
     schema: {
       example: {
         id: 'uuid',
-        title: 'Implement pagination',
-        description: 'We need pagination on tasks endpoints',
-        status: 'OPEN',
+        title: 'Nova tarefa',
+        description: 'Adicionando nova tarefa',
+        status: TaskStatus.IN_PROGRESS,
         createdAt: '2025-12-03T15:12:00.000Z',
       },
     },
@@ -187,6 +200,18 @@ export class TasksController implements IntefaceTasksController {
    * @returns {Promise<any>} Retorna a tarefa atualizada.
    */
   @Patch(':id')
+  @ApiBody({
+    schema: {
+      example: {
+        title: 'Nova tarefa',
+        description: 'Adicionando nova tarefa',
+        dueDate: new Date(),
+        priority: TaskPriority.HIGH,
+        status: TaskStatus.IN_PROGRESS,
+        assignedEmails: 'joao@email.com',
+      },
+    },
+  })
   @ApiOperation({ summary: 'Update a task' })
   @ApiParam({ name: 'id', example: 'uuid' })
   @ApiOkResponse({
@@ -222,13 +247,22 @@ export class TasksController implements IntefaceTasksController {
    * @returns {Promise<any>} Retorna o comentário criado.
    */
   @Post(':id/comments')
+  @ApiBody({
+    schema: {
+      example: {
+        text: 'Novo comentário',
+        authorId: 'uuid',
+        authorEmail: 'joao@email.com',
+      },
+    },
+  })
   @ApiOperation({ summary: 'Create a comment for a task' })
   @ApiCreatedResponse({
     description: 'Comment saved',
     schema: {
       example: {
         id: 'comment-uuid',
-        text: 'We must add error handling here.',
+        text: 'Novo comentário',
         createdAt: '2025-12-03T16:00:00.000Z',
       },
     },

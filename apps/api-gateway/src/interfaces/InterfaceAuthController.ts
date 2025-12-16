@@ -3,9 +3,11 @@ import { LoginDto } from 'src/entities/dto/LoginDto';
 import { RegisterDto } from 'src/entities/dto/RegisterDto';
 import { UserEntity } from 'src/entities/UserEntity';
 import { AuthRequest, ExpressUser } from 'src/types/ExpressUser';
-import { ResponseAuthController } from 'src/types/ResponseAuthController';
-import { ResponseLogout } from 'src/types/ResponseLogout';
-import { ResponseRefresh } from 'src/types/ResponseRefresh';
+import {
+  ResponseAuthController,
+  ResponseLogout,
+  ResponseRefresh,
+} from 'src/types/ResponsesAuthGateway';
 
 /**
  * Interface para o AuthController, definindo métodos que um controlador de autenticação deve implementar.

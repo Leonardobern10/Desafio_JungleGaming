@@ -37,7 +37,7 @@ export class NotificationsController {
     await this.service.processEvent('comment.new', data);
   }
 
-  /**
+  /*
    * Trata evento de task atribuída a usuários.
    * @param {any} data - Dados do evento de atribuição.
    */

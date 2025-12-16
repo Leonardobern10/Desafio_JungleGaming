@@ -6,7 +6,7 @@ import { UpdateTaskDto } from 'src/entities/dto/UpdateTaskDto.dto';
 import { TaskPriority } from 'src/entities/enum/TaskPriority';
 import { TaskStatus } from 'src/entities/enum/TaskStatus';
 import { Task } from 'src/entities/Task';
-import { ResponseTasksFindAll } from 'src/types/ResponseTasksFindAll';
+import { ResponseTasksFindAll } from 'src/types/ReturnTasksGateway';
 
 /**
  * Interface para o TasksController, definindo métodos que um controlador de tarefas deve implementar.
