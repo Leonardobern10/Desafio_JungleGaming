@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { UserEntity } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import { RpcException } from '@nestjs/microservices';
+import { Logger } from 'nestjs-pino';
 
 /**
  * Serviço para operações de usuário no banco de dados.
@@ -11,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity) private usersRepo: Repository<UserEntity>,
+    @Inject(Logger) private logger: Logger,
   ) {}
 
   /**
@@ -43,9 +46,28 @@ export class UsersService {
     email: string,
     password: string,
   ): Promise<UserEntity> {
-    const hash = await bcrypt.hash(password, 10);
-    const user = this.usersRepo.create({ name, email, password: hash });
-    return this.usersRepo.save(user);
+    this.logger.log('Registrando usuário...');
+    try {
+      const hash: string = await bcrypt.hash(password, 10);
+      const userExists: boolean = await this.isValidEmail(email);
+      if (userExists) {
+        this.logger.warn('Falha no registro: Usuário já cadastrado!');
+        throw new RpcException({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: 'Esse e-mail já foi cadastrado! Faça seu login.',
+          errorName: 'Usuário cadastrado!',
+        });
+      }
+      const user: UserEntity = this.usersRepo.create({
+        name,
+        email,
+        password: hash,
+      });
+      return this.usersRepo.save(user);
+    } catch (error) {
+      this.logger.error(`Erro ao registrar usuário: ${email} `, error);
+      throw error;
+    }
   }
 
   /**
@@ -54,7 +76,7 @@ export class UsersService {
    * @param {string} token - Refresh token.
    * @returns {Promise<void>}
    */
-  async updateRefreshToken(id: string, token: string) {
+  async updateRefreshToken(id: string, token: string): Promise<void> {
     await this.usersRepo.update(id, { refreshToken: token });
   }
 
@@ -63,7 +85,7 @@ export class UsersService {
    * @param {string} id - ID do usuário.
    * @returns {Promise<void>}
    */
-  async removeRefreshToken(id: string) {
+  async removeRefreshToken(id: string): Promise<void> {
     await this.usersRepo.update(id, { refreshToken: null });
   }
 

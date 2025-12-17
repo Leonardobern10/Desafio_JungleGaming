@@ -120,12 +120,8 @@ export class AuthController implements InterfaceAuthController {
   @ApiBadRequestResponse({ description: 'Validation failed' })
   @ApiInternalServerErrorResponse({ description: 'Unexpected error' })
   async register(@Body() dto: RegisterDto): Promise<UserEntity> {
-    try {
-      return await lastValueFrom(this.authService.send('auth.register', dto));
-    } catch (error) {
-      this.logger.error(error, 'Register failed');
-      throw new InternalServerErrorException('Unexpected error');
-    }
+    this.logger.log(dto);
+    return await lastValueFrom(this.authService.send('auth.register', dto));
   }
 
   /**

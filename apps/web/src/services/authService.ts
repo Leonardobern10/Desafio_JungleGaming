@@ -31,7 +31,7 @@ export const fetchRegister = async (data: {
     await api.post("/auth/register", data);
     return true;
   } catch (error) {
-    return false;
+    throw error;
   }
 };
 
