@@ -78,7 +78,10 @@ export const fetchTaskByStatus = async (
   const response = await api.get(
     buildPaginatedQuery(page, limit, "status", status)
   );
-  return response.data.data;
+  return {
+    data: response.data.data,
+    meta: response.data.meta, // totalPages, totalItems, currentPage etc.
+  };
 };
 
 export const fetchTaskById = async (id: string): Promise<TaskItem | null> => {

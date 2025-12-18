@@ -26,8 +26,11 @@ type TaskStore = {
 
   setPage: (page: number) => void;
   fetchTasks: (page?: number) => Promise<void>;
-  fetchTasksByPriority: (priority: PriorityTaskType) => Promise<void>;
-  fetchTasksByStatus: (status: StatusTaskType) => Promise<void>;
+  fetchTasksByPriority: (
+    priority: PriorityTaskType,
+    page?: number
+  ) => Promise<void>;
+  fetchTasksByStatus: (status: StatusTaskType, page?: number) => Promise<void>;
   fetchTasksByTitle: (title: string) => Promise<void>;
   fetchTaskById: (id: string) => Promise<void>;
   updateTaskById: (id: string, data: UpdateTaskSchemaType) => Promise<void>;
@@ -61,10 +64,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     });
   },
 
-  fetchTasksByPriority: async (priority) => {
+  fetchTasksByPriority: async (priority, page) => {
+    const state = get();
+    const currentPage = page ?? state.page;
+
     set({ loading: true });
-    const { data } = await fetchTaskByPriority(priority);
-    set({ tasks: data ?? [], loading: false });
+    const { data, meta } = await fetchTaskByPriority(priority, page);
+    set({
+      tasks: data ?? [],
+      meta,
+      page: meta?.currentPage ?? currentPage,
+      loading: false,
+    });
   },
 
   fetchTasksByTitle: async (title) => {
@@ -78,10 +89,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     });
   },
 
-  fetchTasksByStatus: async (status) => {
+  fetchTasksByStatus: async (status, page) => {
+    const state = get();
+    const currentPage = page ?? state.page;
+
     set({ loading: true });
-    const data = await fetchTaskByStatus(status);
-    set({ tasks: data ?? [], loading: false });
+    const { data, meta } = await fetchTaskByStatus(status, page);
+    set({
+      tasks: data ?? [],
+      meta,
+      page: meta?.currentPage ?? currentPage,
+      loading: false,
+    });
   },
 
   fetchTaskById: async (id) => {
