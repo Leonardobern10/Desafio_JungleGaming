@@ -33,7 +33,7 @@ export interface InterfaceAuthController {
    * @param {Request} req - Objeto Request do Express contendo o usuário autenticado.
    * @returns {Promise<ExpressUser>} Retorna os dados do usuário autenticado.
    */
-  getProfile(req: Request): Promise<ExpressUser>;
+  getProfile(req: AuthRequest): Promise<ExpressUser>;
 
   /**
    * Gera um novo access token utilizando o refresh token.

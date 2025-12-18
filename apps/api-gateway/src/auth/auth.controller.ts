@@ -1,15 +1,11 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   Inject,
-  InternalServerErrorException,
-  NotFoundException,
   Post,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -30,11 +26,9 @@ import { Logger } from 'nestjs-pino';
 import { lastValueFrom } from 'rxjs';
 import { JwtAuthGuard } from 'src/jwt/jwt.guard';
 import type { Response, Request } from 'express';
-
 import { LoginDto } from 'src/entities/dto/LoginDto';
 import { RegisterDto } from 'src/entities/dto/RegisterDto';
 import { UserEntity } from 'src/entities/UserEntity';
-
 import { InterfaceAuthController } from 'src/interfaces/InterfaceAuthController';
 import { clearRefreshCookie, setRefreshCookie } from 'src/utils/cookies';
 import type { AuthRequest, ExpressUser } from 'src/types/ExpressUser';
@@ -43,9 +37,10 @@ import {
   ResponseLogout,
   ResponseRefresh,
 } from 'src/types/ResponsesAuthGateway';
+import { Routes } from 'src/utils/routes';
 
 @ApiTags('Auth')
-@Controller('auth')
+@Controller(Routes.AUTH.DEFAULT_PATH)
 export class AuthController implements InterfaceAuthController {
   constructor(
     @Inject('AUTH_SERVICE') private readonly authService: ClientProxy,
@@ -59,22 +54,12 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<ResponseAuthController>} - Retorna access_token e dados do usuário
    * @throws {BadRequestException} - Se credenciais forem inválidas
    */
-  @Post('login')
-  @ApiOperation({ summary: 'Login user' })
-  @ApiBody({
-    schema: { example: { email: 'joao@email.com', password: '123456' } },
-  })
-  @ApiCreatedResponse({
-    description: 'User authenticated successfully',
-    schema: {
-      example: {
-        access_token: 'jwt-access-token',
-        refresh_token: 'jwt-refresh-token',
-      },
-    },
-  })
-  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
-  @ApiBadRequestResponse({ description: 'Unapropriated infos' })
+  @Post(Routes.AUTH.LOGIN.PATH)
+  @ApiOperation(Routes.AUTH.LOGIN.DESCRIPTION)
+  @ApiBody(Routes.AUTH.LOGIN.BODY_SCHEMA)
+  @ApiCreatedResponse(Routes.AUTH.LOGIN.RESPONSE_201)
+  @ApiUnauthorizedResponse(Routes.AUTH.LOGIN.UNAUTHORIZED_401)
+  @ApiBadRequestResponse(Routes.AUTH.LOGIN.BAD_REQUEST_400)
   async login(
     @Body() body: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -99,28 +84,14 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<UserEntity>} - Retorna o usuário criado
    * @throws {InternalServerErrorException} - Se ocorrer erro inesperado
    */
-  @Post('register')
-  @ApiBody({
-    schema: {
-      example: { name: 'joao', email: 'joao@email.com', password: 'joao123' },
-    },
-  })
-  @ApiOperation({ summary: 'Register new user' })
-  @ApiCreatedResponse({
-    description: 'User successfully registered',
-    schema: {
-      example: {
-        id: 'uuid',
-        name: 'John Doe',
-        email: 'john@example.com',
-        createdAt: '2025-12-03T15:12:00.000Z',
-      },
-    },
-  })
-  @ApiBadRequestResponse({ description: 'Validation failed' })
-  @ApiInternalServerErrorResponse({ description: 'Unexpected error' })
+  @Post(Routes.AUTH.REGISTER.PATH)
+  @ApiOperation(Routes.AUTH.REGISTER.DESCRIPTION)
+  @ApiBody(Routes.AUTH.REGISTER.BODY_SCHEMA)
+  @ApiCreatedResponse(Routes.AUTH.REGISTER.RESPONSE_201)
+  @ApiBadRequestResponse(Routes.AUTH.REGISTER.BAD_REQUEST_400)
+  @ApiInternalServerErrorResponse(Routes.AUTH.REGISTER.INTERNAL_500)
   async register(@Body() dto: RegisterDto): Promise<UserEntity> {
-    return await lastValueFrom(this.authService.send('auth.register', dto));
+    return lastValueFrom(this.authService.send('auth.register', dto));
   }
 
   /**
@@ -129,21 +100,12 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<ExpressUser>} - Retorna dados do usuário autenticado
    */
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get(Routes.AUTH.PROFILE.PATH)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Return authenticated user profile' })
-  @ApiOkResponse({
-    description: 'Authenticated user',
-    schema: {
-      example: {
-        id: 'uuid',
-        email: 'john@example.com',
-        name: 'John Doe',
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Invalid or expired token' })
-  async getProfile(@Req() req: any): Promise<ExpressUser> {
+  @ApiOperation(Routes.AUTH.PROFILE.DESCRIPTION)
+  @ApiOkResponse(Routes.AUTH.PROFILE.RESPONSE_200)
+  @ApiUnauthorizedResponse(Routes.AUTH.PROFILE.UNAUTHORIZED_401)
+  async getProfile(@Req() req: AuthRequest): Promise<ExpressUser> {
     return req.user;
   }
 
@@ -154,17 +116,10 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<ResponseRefresh>} - Retorna novo access_token
    * @throws {BadRequestException} - Se refresh token estiver ausente ou inválido
    */
-  @Post('refresh')
-  @ApiOperation({ summary: 'Generate a new access token' })
-  @ApiOkResponse({
-    description: 'Token refreshed',
-    schema: {
-      example: {
-        access_token: 'new-jwt-access-token',
-      },
-    },
-  })
-  @ApiBadRequestResponse({ description: 'Invalid refresh token' })
+  @Post(Routes.AUTH.REFRESH.PATH)
+  @ApiOperation(Routes.AUTH.REFRESH.DESCRIPTION)
+  @ApiOkResponse(Routes.AUTH.REFRESH.RESPONSE_200)
+  @ApiBadRequestResponse(Routes.AUTH.REFRESH.BAD_REQUEST_400)
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -185,14 +140,11 @@ export class AuthController implements InterfaceAuthController {
    * @throws {InternalServerErrorException} - Se ocorrer erro no logout
    */
   @UseGuards(JwtAuthGuard)
-  @Post('logout')
+  @Post(Routes.AUTH.LOGOUT.PATH)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Logout user' })
-  @ApiOkResponse({
-    description: 'User logged out',
-    schema: { example: { message: 'Logged out successfully' } },
-  })
-  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiOperation(Routes.AUTH.LOGOUT.DESCRIPTION)
+  @ApiOkResponse(Routes.AUTH.LOGOUT.RESPONSE_200)
+  @ApiNotFoundResponse(Routes.AUTH.LOGOUT.NOT_FOUND_404)
   async logout(
     @Req() req: AuthRequest,
     @Res({ passthrough: true }) res: Response,
@@ -210,20 +162,16 @@ export class AuthController implements InterfaceAuthController {
    * @returns {Promise<UserEntity[]>} - Lista de usuários
    */
   @UseGuards(JwtAuthGuard)
-  @Get('users')
+  @Get(Routes.AUTH.GET_ALL.PATH)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'All users' })
-  @ApiOkResponse({
-    description: 'User logged out',
-    schema: { example: { message: 'Logged out successfully' } },
-  })
-  @ApiNotFoundResponse({ description: 'Userw not found' })
+  @ApiOperation(Routes.AUTH.GET_ALL.DESCRIPTION)
+  @ApiOkResponse(Routes.AUTH.GET_ALL.RESPONSE_200)
+  @ApiNotFoundResponse(Routes.AUTH.GET_ALL.NOT_FOUND_404)
   async getAllUsers(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserEntity[]> {
     const { id } = req.user;
-    // notifica auth-service para remover hash do DB
     return lastValueFrom(this.authService.send('auth.allUsers', id));
   }
 }
