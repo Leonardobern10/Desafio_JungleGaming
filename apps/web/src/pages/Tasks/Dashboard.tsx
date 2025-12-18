@@ -1,5 +1,6 @@
 import NewTaskDialog from "@/components/dialog/NewTaskDialog";
 import TasksContainer from "@/components/tasks/TasksContainer";
+import TodayCalendar from "@/components/TodayCalendar";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Search } from "lucide-react";
@@ -10,6 +11,7 @@ export default function Dashboard() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center py-6 px-4 bg-muted/40">
+      <TodayCalendar />
       {/* Top Bar */}
       <div className="flex flex-col-reverse sm:flex-row w-full max-w-5xl bg-card border rounded-lg shadow-sm px-6 py-4 items-center gap-4">
         <NewTaskDialog />
