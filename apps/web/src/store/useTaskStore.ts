@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { fetchTasks, updateTask } from "@/services/tasksService";
+import { fetchTaskById, fetchTasks, updateTask } from "@/services/tasksService";
 import type { TaskStore } from "@/types/store/TaskStore";
+import type { TaskItem } from "@/types/TaskItem";
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
@@ -38,6 +39,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       page: meta?.currentPage ?? currentPage,
       loading: false,
     });
+  },
+
+  fetchTaskById: async (id) => {
+    set({ loading: true });
+    const data: TaskItem | null = await fetchTaskById(id);
+    set({ taskById: data, loading: false });
   },
 
   clearFilters: () => {

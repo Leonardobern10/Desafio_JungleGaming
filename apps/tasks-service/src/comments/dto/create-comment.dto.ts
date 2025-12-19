@@ -1,12 +1,12 @@
-import { IsEmail, IsString, IsUUID } from 'class-validator';
+import { isEmail, IsEmail, isString, IsString, IsUUID } from 'class-validator';
 
 export class CreateCommentDto {
+  @IsUUID()
+  taskId: string;
+
   @IsString()
   text: string;
 
-  @IsUUID()
-  authorId: string;
-
   @IsEmail()
-  authorEmail: string;
+  author: string;
 }

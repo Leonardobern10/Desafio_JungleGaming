@@ -15,5 +15,6 @@ export type TaskStore = {
   setFilters: (filters: Partial<TaskFilters>) => void;
   clearFilters: () => void;
   fetchTasks: (page?: number) => Promise<void>;
+  fetchTaskById: (id: string) => Promise<void>;
   updateTaskById: (id: string, data: UpdateTaskSchemaType) => Promise<void>;
 };

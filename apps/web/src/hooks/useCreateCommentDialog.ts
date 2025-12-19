@@ -26,6 +26,7 @@ export const useCreateCommentDialog = (id: string) => {
   const onSubmit: SubmitHandler<CreateCommentSchemaType> = async (
     data: CreateCommentSchemaType
   ) => {
+    console.log(id, data);
     await saveComment(id, data);
     await fetchTaskById(id);
     reset();

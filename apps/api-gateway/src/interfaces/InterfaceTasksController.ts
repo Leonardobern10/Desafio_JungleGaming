@@ -63,7 +63,7 @@ export interface IntefaceTasksController {
    */
   createComments(
     taskId: string,
-    dto: CreateCommentDto,
+    data: { text: string },
     req: any,
   ): Promise<Comment>;
 

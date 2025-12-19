@@ -4,56 +4,20 @@ import type { TaskItem } from "@/types/TaskItem";
 import PaginationComponent from "./PaginationComponent";
 import { useTasksContainer } from "@/hooks/useTasksContainer";
 import TaskComponentSkeleton from "../skeletons/TaskComponentSkeleton";
-import { useEffect } from "react";
-import { useRouter } from "@tanstack/react-router";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useForm } from "react-hook-form";
 import { ControllerSelect } from "../form/ControllerSelectForm";
 import { Separator } from "@radix-ui/react-separator";
 import ButtonCardAction from "../dialog/ButtonCardAction";
 import { statusOptions } from "@/data/selectStatus.data";
 import { orderOptions, priorityOptions } from "@/data/selectPriority.data";
-import { OrderParams } from "@/types/OrderOptionsEnum";
-import type { FilterFormValues } from "@/types/FilterFormValues";
 
 type SearchTitle = {
   searchTitle: string;
 };
 
 export default function TasksContainer({ searchTitle }: SearchTitle) {
-  const { tasks, loading, setFilters } = useTasksContainer();
-  const { isLogged } = useAuthStore();
-  const router = useRouter();
-  const { control, watch, reset } = useForm<FilterFormValues>({
-    defaultValues: { status: "", priority: "", order: OrderParams.CREATED },
+  const { tasks, loading, control, handleReset } = useTasksContainer({
+    searchTitle,
   });
-
-  const selectedStatus = watch("status");
-  const selectedPriority = watch("priority");
-  const selectedOrder = watch("order");
-
-  const notAccess = () => {
-    if (!isLogged) router.navigate({ from: "/auth/login" });
-  };
-
-  useEffect(() => {
-    notAccess();
-
-    const delay = setTimeout(() => {
-      setFilters({
-        title: searchTitle.trim() || undefined,
-        status: selectedStatus || undefined,
-        priority: selectedPriority || undefined,
-        order: selectedOrder || undefined,
-      });
-    }, 400);
-    return () => clearTimeout(delay);
-  }, [searchTitle, selectedStatus, selectedPriority, selectedOrder]);
-
-  const handleReset = () => {
-    reset({ status: "", priority: "" });
-    setFilters({});
-  };
 
   return (
     <div className="w-full h-full flex flex-col shadow-sm rounded-xl bg-card">

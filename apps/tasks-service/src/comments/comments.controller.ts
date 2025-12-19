@@ -25,10 +25,8 @@ export class CommentsController {
    * @returns Comentário criado
    */
   @MessagePattern('comment.new')
-  create(
-    @Payload() data: { taskId: string; dto: CreateCommentDto; email: string },
-  ) {
-    return this.service.create(data.taskId, data.dto, data.email);
+  create(@Payload() data: CreateCommentDto) {
+    return this.service.create(data.taskId, data.text, data.author);
   }
 
   /**

@@ -31,18 +31,21 @@ export class CommentsService {
    *
    * @param taskId - Identificador da task
    * @param dto - DTO contendo o texto do comentário
-   * @param email - Email do autor
+   * @param author - Email do autor
    * @throws NotFoundException - Caso a task não exista
    * @returns Comentário persistido
    */
-  async create(taskId: string, dto: CreateCommentDto, email: string) {
+  async create(taskId: string, text: string, author: string) {
     const task = await this.tasksRepo.findOne({ where: { id: taskId } });
     if (!task) throw new NotFoundException('Task não encontrada');
+
     const comment = this.commentsRepo.create({
-      text: dto.text,
-      author: email,
+      text: text,
+      author: author,
       task: task,
     });
+
+    console.log(comment);
     const saved = await this.commentsRepo.save(comment);
 
     // Emite evento para o microserviço de notificações

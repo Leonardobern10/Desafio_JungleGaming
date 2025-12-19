@@ -245,15 +245,16 @@ export class TasksController implements IntefaceTasksController {
   @ApiNotFoundResponse({ description: 'Task not found' })
   async createComments(
     @Param('id') taskId: string,
-    @Body() dto: CreateCommentDto,
+    @Body() data: { text: string },
     @Req() req: any,
   ) {
-    this.logger.log('Criação de caadstro checgou');
+    this.logger.log('Criação de comentario checgou');
+    this.logger.log('Recebido: ', taskId, data.text);
     return lastValueFrom(
       this.taskService.send('comment.new', {
         taskId,
-        dto,
-        email: req.user.email,
+        text: data.text,
+        author: req.user.email,
       }),
     );
   }
