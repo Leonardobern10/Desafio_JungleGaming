@@ -6,7 +6,7 @@ export default function TodayCalendar() {
     <Calendar
       mode="single"
       selected={today}
-      className="rounded-md border shadow-sm w-5/6 mb-5"
+      className="rounded-md border shadow-sm w-full md:w-1/4 mb-5"
       captionLayout="dropdown"
     />
   );

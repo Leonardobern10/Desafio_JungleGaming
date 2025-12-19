@@ -4,35 +4,70 @@ import TodayCalendar from "@/components/TodayCalendar";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 export default function Dashboard() {
   const [searchTitle, setSearchTitle] = useState("");
+  const [currentHour, setCurrentHour] = useState(moment().format("LTS"));
+
+  useEffect(() => {
+    const hourCurrent = () =>
+      setInterval(() => {
+        setCurrentHour(moment().format("pt-BR"));
+      }, 100);
+    hourCurrent();
+  }, [currentHour]);
+
+  const today = new Date();
+  const hour = moment().format("LTS");
+
+  const formattedDay = today.toLocaleDateString("pt-BR", {
+    weekday: "long",
+  });
+
+  const formattedDate = today.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center py-6 px-4 bg-muted/40">
-      <TodayCalendar />
-      {/* Top Bar */}
-      <div className="flex flex-col-reverse sm:flex-row w-full max-w-5xl bg-card border rounded-lg shadow-sm px-6 py-4 items-center gap-4">
-        <NewTaskDialog />
+    <div className="min-h-screen bg-muted/40 px-4 py-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row items-start md:items-center justify-evenly gap-6">
+          <div>
+            <h1 className="text-4xl font-bold capitalize">{formattedDay}</h1>
+            <p className="text-muted-foreground text-lg">{formattedDate}</p>
+            <p className="text-muted-foreground text-2xl">{hour}</p>
+          </div>
 
-        <Separator orientation="vertical" className="h-8" />
+          <TodayCalendar />
+        </header>
 
-        <div className="relative w-full min-w-1/4 max-w-sm">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Pesquisar tarefa..."
-            className="pl-10"
-            value={searchTitle}
-            onChange={(e) => setSearchTitle(e.target.value)}
-          />
-        </div>
-      </div>
+        {/* Top Bar */}
+        <section className="flex flex-col sm:flex-row items-center gap-4 bg-card border rounded-xl px-6 py-4 shadow-sm">
+          <NewTaskDialog />
 
-      {/* Tasks Content */}
-      <div className="w-full md:w-7/8 mt-4">
-        <TasksContainer searchTitle={searchTitle} />
+          <Separator orientation="vertical" className="hidden sm:block h-8" />
+
+          <div className="relative w-full sm:max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Pesquisar tarefa..."
+              className="pl-10"
+              value={searchTitle}
+              onChange={(e) => setSearchTitle(e.target.value)}
+            />
+          </div>
+        </section>
+
+        {/* Tasks */}
+        <section>
+          <TasksContainer searchTitle={searchTitle} />
+        </section>
       </div>
     </div>
   );
