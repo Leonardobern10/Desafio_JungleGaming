@@ -2,14 +2,7 @@ import { useTaskStore } from "@/store/useTaskStore";
 import { useEffect } from "react";
 
 export const useTasksContainer = () => {
-  const {
-    tasks,
-    loading,
-    fetchTasks,
-    fetchTasksByStatus,
-    fetchTasksByTitle,
-    fetchTasksByPriority,
-  } = useTaskStore();
+  const { tasks, loading, fetchTasks, setFilters } = useTaskStore();
 
   useEffect(() => {
     fetchTasks();
@@ -19,8 +12,6 @@ export const useTasksContainer = () => {
     tasks,
     loading,
     fetchTasks,
-    fetchTasksByStatus,
-    fetchTasksByTitle,
-    fetchTasksByPriority,
+    setFilters,
   };
 };

@@ -26,18 +26,9 @@ export default function TasksContainer({
 }: {
   searchTitle: string;
 }) {
-  const {
-    tasks,
-    loading,
-    fetchTasks,
-    fetchTasksByStatus,
-    fetchTasksByTitle,
-    fetchTasksByPriority,
-  } = useTasksContainer();
-
+  const { tasks, loading, setFilters } = useTasksContainer();
   const { isLogged } = useAuthStore();
   const router = useRouter();
-
   const { control, watch, reset } = useForm<FilterFormValues>({
     defaultValues: { status: "", priority: "" },
   });
@@ -51,27 +42,20 @@ export default function TasksContainer({
 
   useEffect(() => {
     notAccess();
+
     const delay = setTimeout(() => {
-      if (searchTitle.trim().length > 0) fetchTasksByTitle(searchTitle);
-      else fetchTasks();
+      setFilters({
+        title: searchTitle.trim() || undefined,
+        status: selectedStatus || undefined,
+        priority: selectedPriority || undefined,
+      });
     }, 400);
     return () => clearTimeout(delay);
-  }, [searchTitle]);
-
-  // Effect para status e prioridade
-  useEffect(() => {
-    if (selectedStatus) fetchTasksByStatus(selectedStatus);
-    else fetchTasks();
-  }, [selectedStatus]);
-
-  useEffect(() => {
-    if (selectedPriority) fetchTasksByPriority(selectedPriority);
-    else fetchTasks();
-  }, [selectedPriority]);
+  }, [searchTitle, selectedStatus, selectedPriority]);
 
   const handleReset = () => {
     reset({ status: "", priority: "" });
-    fetchTasks();
+    setFilters({});
   };
 
   return (
