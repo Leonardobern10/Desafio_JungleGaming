@@ -12,7 +12,7 @@ export default function CommentsComponent({
     <div key={id} className="flex w-full flex-col justify-between px-2">
       <div className="flex flex-col gap-y-4 w-full text-sm">
         <div className="flex items-center gap-x-1">
-          <div>
+          <div className="p-1">
             <IoPerson />
           </div>
           <p>

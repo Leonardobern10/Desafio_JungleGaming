@@ -4,11 +4,11 @@ import { Link, useRouter } from "@tanstack/react-router";
 
 export default function Home() {
   const { isLogged, logout } = useAuthStore();
-  const { navigate } = useRouter();
+  const router = useRouter();
 
   const handleLogout = async () => {
     logout();
-    navigate({ from: "/auth/login" });
+    router.navigate({ from: "/auth/login" });
   };
 
   return (
@@ -23,13 +23,13 @@ export default function Home() {
           produtividade.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-6">
           {isLogged ? (
             <>
-              <Button asChild size="lg">
+              <Button asChild size="lg" variant="default">
                 <Link to="/tasks">Acessar Tarefas</Link>
               </Button>
-              <Button variant="outline" onClick={handleLogout}>
+              <Button variant="outline" size="lg" onClick={handleLogout}>
                 Sair
               </Button>
             </>
@@ -39,29 +39,29 @@ export default function Home() {
                 <Link to="/auth/login">Login</Link>
               </Button>
 
-              <Button asChild variant="ghost" size="lg">
+              <Button asChild variant="outline" size="lg">
                 <Link to="/auth/register">Criar Conta</Link>
               </Button>
             </>
           )}
         </div>
 
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="p-6 bg-white rounded-xl shadow-sm border hover:shadow-md transition">
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 place-items-center">
+          <div className="card-homepage">
             <h3 className="font-semibold text-lg">Organização</h3>
             <p className="text-sm text-gray-500 mt-2">
               Categorize e priorize suas tarefas facilmente.
             </p>
           </div>
 
-          <div className="p-6 bg-white rounded-xl shadow-sm border hover:shadow-md transition">
+          <div className="card-homepage">
             <h3 className="font-semibold text-lg">Produtividade</h3>
             <p className="text-sm text-gray-500 mt-2">
               Acompanhe seu progresso e mantenha o foco.
             </p>
           </div>
 
-          <div className="p-6 bg-white rounded-xl shadow-sm border hover:shadow-md transition">
+          <div className="card-homepage">
             <h3 className="font-semibold text-lg">Simplicidade</h3>
             <p className="text-sm text-gray-500 mt-2">
               Interface moderna e fácil de usar no dia a dia.
