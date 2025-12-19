@@ -14,13 +14,12 @@ export default function Dashboard() {
   useEffect(() => {
     const hourCurrent = () =>
       setInterval(() => {
-        setCurrentHour(moment().format("pt-BR"));
+        setCurrentHour(moment().format("LTS"));
       }, 100);
     hourCurrent();
   }, [currentHour]);
 
   const today = new Date();
-  const hour = moment().format("LTS");
 
   const formattedDay = today.toLocaleDateString("pt-BR", {
     weekday: "long",
@@ -40,7 +39,7 @@ export default function Dashboard() {
           <div>
             <h1 className="text-4xl font-bold capitalize">{formattedDay}</h1>
             <p className="text-muted-foreground text-lg">{formattedDate}</p>
-            <p className="text-muted-foreground text-2xl">{hour}</p>
+            <p className="text-muted-foreground text-2xl">{currentHour}</p>
           </div>
 
           <TodayCalendar />
