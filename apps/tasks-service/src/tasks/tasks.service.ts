@@ -11,6 +11,7 @@ import { PaginationDto } from 'src/utils/pagination.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { ResponsePaginatedDto } from 'src/utils/response-paginated.dto';
 import { OrderParams } from 'types/OrderParams';
+import { messagePatterns } from 'src/utils/messagePatterns';
 
 /**
  * Serviço responsável pelas regras de negócio relacionadas às Tasks.
@@ -28,9 +29,12 @@ export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepo: Repository<Task>,
+
     @InjectRepository(TaskHistory)
     private readonly historyRepo: Repository<TaskHistory>,
+
     @Inject(Logger) private readonly logger: Logger,
+
     @Inject('NOTIFICATIONS_SERVICE')
     private readonly client: ClientProxy,
   ) {}
@@ -50,7 +54,9 @@ export class TasksService {
       const task = this.taskRepo.create({ ...dto, authorEmail: email });
       await this.taskRepo.save(task);
       await this.logHistory(task.id, 'CREATED', null, task);
-      this.client.emit('tasks.created', task);
+      this.client.emit('tasks.created', task).subscribe({
+        error: (err) => this.logger.error(err),
+      });
       this.logger.log('Tarefa criada com sucesso!');
       return task;
     } catch (error) {

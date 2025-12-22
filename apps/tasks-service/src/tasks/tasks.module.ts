@@ -6,6 +6,8 @@ import { Task } from './entities/task.entity';
 import { TaskHistory } from 'src/tasks-history/entities/task-history.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
+import 'dotenv/config';
+
 @Module({
   imports: [
     ClientsModule.register([
@@ -23,5 +25,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   ],
   controllers: [TasksController],
   providers: [TasksService],
+  exports: [TasksService],
 })
 export class TasksModule {}

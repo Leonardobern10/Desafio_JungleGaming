@@ -16,6 +16,7 @@ export class NotificationsController {
    */
   @EventPattern('tasks.created')
   async handleTaskCreated(@Payload() data: any) {
+    console.log('Iniciou processo de criação de tarefa');
     await this.service.processEvent('tasks.created', data);
   }
 

@@ -21,7 +21,6 @@ import 'dotenv/config';
         },
       },
     ]),
-
     TypeOrmModule.forFeature([Comment, Task]),
   ],
   controllers: [CommentsController],

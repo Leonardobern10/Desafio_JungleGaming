@@ -49,15 +49,20 @@ export class CommentsService {
     const saved = await this.commentsRepo.save(comment);
 
     // Emite evento para o microserviço de notificações
-    this.client.emit('comment.new', {
-      id: saved.id,
-      text: saved.text,
-      author: saved.author,
-      taskId: task.id,
-      taskTitle: task.title,
-      assignedEmails: task.assignedEmails ?? [],
-      createdAt: saved.createdAt,
-    });
+    this.client
+      .emit('comment.new', {
+        id: saved.id,
+        text: saved.text,
+        author: saved.author,
+        taskId: task.id,
+        taskTitle: task.title,
+        assignedEmails: task.assignedEmails ?? [],
+        createdAt: saved.createdAt,
+      })
+      .subscribe({
+        complete: () => console.log('Tudo certo'),
+        error: (err) => console.log(err),
+      });
     return saved;
   }
 
