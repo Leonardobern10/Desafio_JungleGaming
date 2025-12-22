@@ -122,6 +122,9 @@
   html {
     @apply font-sans;
   }
+  h1 {
+    @apply text-4xl font-bold capitalize;
+  }
 }
 
 @layer components {
@@ -145,5 +148,16 @@
   }
   .card-homepage {
     @apply p-6 md:px-4 w-5/6 md:w-full bg-white rounded-xl shadow-sm border hover:shadow-md transition;
+  }
+
+  /* Auth */
+  .container-auth {
+    @apply w-full h-full md:min-h-screen flex items-center justify-center bg-muted/40 px-4;
+  }
+  .form-auth {
+    @apply flex flex-col gap-6 mt-6;
+  }
+  .body-auth {
+    @apply w-full max-w-md bg-card shadow-sm rounded-xl p-8 border;
   }
 }

@@ -20,20 +20,19 @@ export default function TasksContainer({ searchTitle }: SearchTitle) {
   });
 
   return (
-    <div className="w-full h-full flex flex-col shadow-sm rounded-xl bg-card">
+    <div className="w-full h-full flex flex-col shadow-sm rounded-xl">
       {/* Filtros */}
       <Card className="w-full">
-        <div className="p-4 rounded-t-lg flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:w-5/6">
+        <div className="px-10 rounded-t-lg flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:w-full">
           {/* Botão Reset */}
           <ButtonCardAction
             onClick={handleReset}
             buttonName={"Redefinir busca"}
             size="lg"
-            full
           />
 
           {/* Selects */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-20">
             <ControllerSelect
               name="status"
               control={control}
@@ -60,7 +59,7 @@ export default function TasksContainer({ searchTitle }: SearchTitle) {
 
         <Separator
           orientation="horizontal"
-          className="my-4 w-5/6 bg-neutral-500/20 h-0.5"
+          className="my-2 w-full bg-neutral-500/20 h-0.5"
         />
 
         {/* Conteúdo */}
@@ -76,7 +75,7 @@ export default function TasksContainer({ searchTitle }: SearchTitle) {
               Nenhuma tarefa encontrada.
             </div>
           ) : (
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <ul className="grid grid-cols-1 md:grid-cols-3 gap-6 place-items-center">
               {tasks.map((task: TaskItem) => (
                 <TaskComponent key={task.id} {...task} />
               ))}

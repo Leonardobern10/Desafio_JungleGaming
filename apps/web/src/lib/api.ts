@@ -14,4 +14,31 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const url = error.config?.url;
+
+    if (error.response?.status === 401 && !url.includes("/auth")) {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/auth/refresh",
+          {},
+          { withCredentials: true }
+        );
+
+        const newToken = response.data.acessToken;
+        useAuthStore.getState().setToken(newToken);
+
+        error.config.header.Authorization = `Bearer ${newToken}`;
+
+        return api(error.config);
+      } catch {
+        useAuthStore.getState().logout();
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

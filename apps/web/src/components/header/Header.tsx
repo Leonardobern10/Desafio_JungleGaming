@@ -12,12 +12,12 @@ export default function Header() {
     navigate({ from: "/auth/login" });
   };
   return (
-    <header className="w-full flex justify-between items-center px-6 md:px-20 py-4 bg-foreground/80">
-      <h1 className="text-secondary w-fit">
-        <Link to="/">JungleTasks</Link>
-      </h1>
+    <header className="w-full flex justify-between items-center px-6 md:px-40 py-4 bg-foreground/80">
+      <p className="text-xl text-secondary w-fit">
+        <Link to="/">TaskLy</Link>
+      </p>
       <nav className="w-fit flex flex-row justify-center ">
-        <ul className="flex flex-row justify-between gap-x-4  md:gap-x-8 items-center h-fit w-fit">
+        <ul className="flex flex-row justify-between gap-x-4 md:gap-x-8 items-center h-fit w-fit">
           {isLogged ? (
             <>
               <NavBarListItem name="Tasks" path="/tasks/dashboard" />

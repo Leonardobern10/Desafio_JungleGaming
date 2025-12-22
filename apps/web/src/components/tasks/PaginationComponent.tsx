@@ -31,7 +31,7 @@ export default function PaginationComponent() {
           <PaginationItem key={p}>
             <PaginationLink
               isActive={p === dataPages?.page}
-              onClick={() => dataPages.setPage(p)}
+              onClick={() => dataPages.fetchTasks(p)}
               className="cursor-pointer"
             >
               {p}

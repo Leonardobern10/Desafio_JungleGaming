@@ -140,14 +140,14 @@ export class TasksService {
    */
   async update(id: string, dto: UpdateTaskDto) {
     const oldTask = await this.findOne(id);
+
     const updated = await this.taskRepo.save({
       ...oldTask,
       ...dto,
-      assignedEmails:
-        dto.assignedEmails || (oldTask ? oldTask.assignedEmails : []),
+      assignedEmails: dto.assignedEmails || [],
     });
     await this.logHistory(id, 'UPDATED', oldTask, updated);
-    await this.client.emit('tasks.updated', updated);
+    this.client.emit('tasks.updated', updated);
     return updated;
   }
 

@@ -13,7 +13,7 @@ export const fetchTasks = async (
     page: 1,
     limit: 15,
   }
-): Promise<PaginatedResponse<TaskItem>> => {
+): Promise<PaginatedResponse<TaskItem> | void> => {
   const response = await api.get("/tasks", {
     params: {
       page: params.page ?? pageDefault,

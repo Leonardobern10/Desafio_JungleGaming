@@ -12,11 +12,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+    <div className="h-full md:h-full flex flex-col items-center justify-center bg-gray-50 px-4 py-12">
       <div className="max-w-2xl text-center space-y-6">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-          Sistema de Gestão de Tarefas
-        </h1>
+        <h1>Sistema de Gestão de Tarefas</h1>
 
         <p className="text-lg text-gray-600">
           Organize suas tarefas, acompanhe seu progresso e aumente sua

@@ -11,6 +11,7 @@ function App() {
 
   // conectar websocket
   useEffect(() => {
+    console.log(token);
     if (token && user?.email) connect();
   }, [user]);
 
