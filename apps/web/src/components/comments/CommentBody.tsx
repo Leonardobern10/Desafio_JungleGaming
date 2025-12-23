@@ -2,17 +2,22 @@ import { IoPerson } from "react-icons/io5";
 import CommentAuthor from "./CommentAuthor";
 import CommentText from "./CommentText";
 
-export default function CommentBody({
-  author,
-  text,
-}: {
+const styles = {
+  commentContainer: "flex flex-col gap-y-4 w-full text-sm",
+  commentContent: "flex items-center gap-x-1",
+  containerIcon: "p-1",
+};
+
+type CommentBodyProps = {
   author: string;
   text: string;
-}) {
+};
+
+export default function CommentBody({ author, text }: CommentBodyProps) {
   return (
-    <div className="flex flex-col gap-y-4 w-full text-sm">
-      <div className="flex items-center gap-x-1">
-        <div className="p-1">
+    <div className={styles.commentContainer}>
+      <div className={styles.commentContent}>
+        <div className={styles.containerIcon}>
           <IoPerson />
         </div>
         {author && <CommentAuthor author={author} />}

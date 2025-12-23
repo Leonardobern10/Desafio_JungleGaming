@@ -3,6 +3,10 @@ import { Separator } from "../ui/separator";
 import CommentTime from "./CommentTime";
 import CommentBody from "./CommentBody";
 
+const style = {
+  containerComment: "flex w-full flex-col justify-between px-2",
+};
+
 export default function CommentsComponent({
   id,
   author,
@@ -10,7 +14,7 @@ export default function CommentsComponent({
   text,
 }: Comments) {
   return (
-    <div key={id} className="flex w-full flex-col justify-between px-2">
+    <div key={id} className={style.containerComment}>
       <CommentBody text={text} author={author!} />
       <CommentTime createdAt={createdAt} />
       <Separator />
