@@ -7,7 +7,7 @@ export type TaskItem = {
   title: string;
   authorEmail: string;
   description: string;
-  dueDate: Date | null;
+  dueDate: Date;
   priority: PriorityTaskType;
   status: StatusTaskType;
   assignedEmails: string[];
