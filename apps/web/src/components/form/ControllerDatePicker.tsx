@@ -1,6 +1,7 @@
 import { Controller } from "react-hook-form";
 import { DatePickerForm } from "./DatePickerForm";
 import type { ControllerDatePickerProps } from "@/types/props/ControllerDatePickerProps";
+import TextError from "../TextError";
 
 export function ControllerDatePicker({
   name,
@@ -22,7 +23,7 @@ export function ControllerDatePicker({
         )}
       />
 
-      {error && <p className="text-red-500 text-sm px-1">{error.message}</p>}
+      {error && <TextError error={error} />}
     </div>
   );
 }

@@ -21,7 +21,6 @@ export function ControllerMultiSelect({
       render={({ field }) => (
         <div className="flex flex-col gap-1">
           <label className="text-sm">{label}</label>
-
           <MultiSelect
             options={options}
             value={field.value || []}

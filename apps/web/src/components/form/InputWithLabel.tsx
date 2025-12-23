@@ -1,6 +1,7 @@
 import type { InputWithLabelProps } from "@/types/props/InputWithLabelProps";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import TextError from "../TextError";
 
 export default function InputWithLabel({
   id,
@@ -24,11 +25,7 @@ export default function InputWithLabel({
         {...rest}
         className="text-xs"
       />
-      {error && (
-        <Label className="text-xs font-light text-red-700">
-          {error.message}
-        </Label>
-      )}
+      {error && <TextError error={error} />}
     </div>
   );
 }

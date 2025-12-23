@@ -1,6 +1,7 @@
 import { Controller } from "react-hook-form";
 import SelectForm from "./SelectForm";
 import type { ControllerSelectProps } from "@/types/props/ControllerSelectProps";
+import TextError from "../TextError";
 
 export function ControllerSelect<T>({
   name,
@@ -26,9 +27,7 @@ export function ControllerSelect<T>({
             value={field.value}
             onValueChange={field.onChange}
           />
-          {error && (
-            <span className="text-sm text-red-500">{error.message}</span>
-          )}
+          {error && <TextError error={error} />}
         </div>
       )}
     />
